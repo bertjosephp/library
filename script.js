@@ -132,7 +132,6 @@ function createCard(book) {
             && book.author === cardRemoveButton.parentNode.parentNode.children[1].textContent
         ))
         myLibrary.splice(index, 1);
-        console.log(index);
 
         // remove card from grid
         cardRemoveButton.parentNode.parentNode.parentNode.removeChild(cardRemoveButton.parentNode.parentNode);
