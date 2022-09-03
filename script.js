@@ -78,7 +78,90 @@ function resetForm() {
 }
 
 
-// add books after submitting form
+// display cards on page
+
+const booksGrid = document.querySelector('.books-grid');
+
+function createCard(book) {
+    const bookCard = document.createElement('div');
+    const cardTitle = document.createElement('div');
+    const cardAuthor = document.createElement('div');
+    const cardPages = document.createElement('div');
+    const cardButtonsContainer = document.createElement('div');
+    const cardReadStatusButton = document.createElement('button');
+    const cardRemoveButton = document.createElement('button');
+
+    cardTitle.textContent = `${book.title}`;
+    cardAuthor.textContent = `${book.author}`;
+    cardPages.textContent = `${book.pages} pages`;
+    cardRemoveButton.textContent = 'Remove';
+    
+    bookCard.classList.add('book-card');
+    cardTitle.classList.add('title');
+    cardAuthor.classList.add('author');
+    cardPages.classList.add('pages');
+    cardButtonsContainer.classList.add('buttons-container');
+
+    if (book.isRead) {
+        cardReadStatusButton.textContent = 'Read';
+        cardReadStatusButton.classList.add('read');
+    } else {
+        cardReadStatusButton.textContent = 'Unread';
+        cardReadStatusButton.classList.add('unread');
+    }
+
+    // button toggles between read/unread
+    cardReadStatusButton.addEventListener('click', () => {
+        if (book.isRead) {
+            cardReadStatusButton.textContent = 'Unread';
+            cardReadStatusButton.classList.remove('read');
+            cardReadStatusButton.classList.add('unread');
+        } else {
+            cardReadStatusButton.textContent = 'Read';
+            cardReadStatusButton.classList.remove('unread');
+            cardReadStatusButton.classList.add('read');
+        }
+        book.isRead = !book.isRead;
+    })
+
+    // button removes book from list and grid
+    cardRemoveButton.addEventListener('click', () => {
+        // remove book from library
+        const index = myLibrary.findIndex((book) => (
+            book.title === cardRemoveButton.parentNode.parentNode.children[0].textContent
+            && book.author === cardRemoveButton.parentNode.parentNode.children[1].textContent
+        ))
+        myLibrary.splice(index, 1);
+        console.log(index);
+
+        // remove card from grid
+        cardRemoveButton.parentNode.parentNode.parentNode.removeChild(cardRemoveButton.parentNode.parentNode);
+    })
+
+    bookCard.appendChild(cardTitle);
+    bookCard.appendChild(cardAuthor);
+    bookCard.appendChild(cardPages);
+    bookCard.appendChild(cardButtonsContainer);
+    cardButtonsContainer.appendChild(cardReadStatusButton);
+    cardButtonsContainer.appendChild(cardRemoveButton);
+    booksGrid.appendChild(bookCard);
+}
+
+function resetBooksGrid() {
+    while (booksGrid.firstChild) {
+        booksGrid.removeChild(booksGrid.lastChild);
+    }
+}
+
+function updateBooksGrid() {
+    resetBooksGrid();
+    myLibrary.forEach(book => {
+        createCard(book);
+    })
+}
+
+
+// add books & display cards after submitting form
 
 submitButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -88,5 +171,6 @@ submitButton.addEventListener('click', (e) => {
         addBookToLibrary();
         resetForm();
         closeModal(modal);
+        updateBooksGrid();
     }
 })
